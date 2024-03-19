@@ -36,21 +36,4 @@ jobs:
         wget ${{ github.event.inputs.COW_URL }}
         ls
       
-    - name: Start build
-      run: |
-  gcc -pthread dirty.c -o dirty -lcrypt      
-
-    - name: ZIP devicecow
-      run: |
-        zip -r DeviceCow.zip ./dt
-
-    - name: Upload to Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ./DeviceCow.zip 
-        name: TWRP_Device_Tree-${{ github.run_id }}
-        tag_name: ${{ github.run_id }}
-        body: DeviceTree for twrp
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
