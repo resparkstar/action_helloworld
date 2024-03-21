@@ -1,61 +1,24 @@
-name: Make TWRP Device
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: 画爱心Windows版
 
 on:
   workflow_dispatch:
-    inputs:
-      LIBRARY_NAME:
-        description: 'LIBRARY_NAME'
-        required: true
-        default: 'Twrp_Device_Genter'
-      IMG_URL:
-        description: 'IMG_URL'
-        required: true
-        default: 'https://github.com/momo54181/action_build_twrp_device_tree/blob/main/recovery.img'
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-    if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-20.04
-    
+  pyinstaller-build:
+    runs-on: windows-latest
     steps:
-    - name: Check Out
-      uses: actions/checkout@main
-      
-    - name: Prepare the environment
-      run: |
-        sudo apt update
-        sudo apt -y install python python3 python3-pip python3-pip cpio wget
-      
-    - name: Set variables
-      run: |
-        echo "name=date::$(date +%F)" >> $GITHUB_OUTPUT
-      id: var
-      
-    - name: Install TWRP generator 
-      run: |
-        pip3 install twrpdtgen
-        mkdir dt
-    
-    - name: Download boot or recovery img
-      run: |
-        wget ${{ github.event.inputs.IMG_URL }}
-        ls
-      
-    - name: Start build
-      run: |
-        python3 -m twrpdtgen -o dt/ *.img
+      - name: Create Executable
+        uses: sayyid5416/pyinstaller@v1
+        with:
+          python_ver: '3.12'
+          spec: 'hello.py'
+          upload_exe_with_name: 'love_heart'
+          options: --onefile, --name "love_heart", --windowed, 
 
-    - name: ZIP device tree
-      run: |
-        zip -r DeviceTree.zip ./dt
 
-    - name: Upload to Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ./DeviceTree.zip
-        name: TWRP_Device_Tree-${{ github.run_id }}
-        tag_name: ${{ github.run_id }}
-        body: DeviceTree for twrp
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
