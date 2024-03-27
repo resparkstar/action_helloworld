@@ -1,0 +1,28 @@
+name: Build and Upload Hello  
+  
+on:  
+  push:  
+    branches:  
+      - main  
+  
+jobs:  
+  build-and-upload:  
+    runs-on: ubuntu-latest  
+    steps:  
+      - name: Checkout code  
+        uses: actions/checkout@v2  
+  
+      - name: Install GCC  
+        run: sudo apt-get update && sudo apt-get install -y gcc  
+  
+      - name: Compile hello.c  
+        run: gcc hello.c -o hello  
+  
+      - name: Upload hello to Release  
+        uses: ncipollo/release-action@v1  
+        with:  
+          artifacts: "hello" # 这里是你要上传的文件名  
+          token: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub的默认token来访问仓库  
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # 用于发布的token，通常与上面的token相同  
+          draft: false # 是否为草稿状态  
+          prerelease: false # 是否为预发布状态
